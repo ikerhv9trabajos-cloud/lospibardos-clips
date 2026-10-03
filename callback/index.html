@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Autorización de TikTok · LosPibardos Clips</title>
+<link rel="stylesheet" href="../estilo.css">
+</head>
+<body>
+<main>
+  <h1 id="titulo">Autorización de TikTok</h1>
+  <p id="texto" class="suave">Comprobando…</p>
+  <div id="bloque" hidden>
+    <p>Copia esta dirección completa y pégala en el chat del bot de Telegram:</p>
+    <div class="caja" id="url"></div>
+    <button id="copiar" type="button">Copiar</button>
+  </div>
+  <p class="suave">Esta página no guarda ni envía nada: solo te enseña la dirección para que la copies.</p>
+</main>
+<script>
+  // TikTok vuelve aquí con ?code=...&state=... (o ?error=...). El bot lee el código de la dirección pegada.
+  const q = new URLSearchParams(location.search);
+  const titulo = document.getElementById("titulo"), texto = document.getElementById("texto");
+  if (q.get("code")) {
+    titulo.textContent = "✅ Permiso concedido";
+    texto.textContent = "Ya casi está.";
+    document.getElementById("url").textContent = location.href;
+    document.getElementById("bloque").hidden = false;
+    document.getElementById("copiar").onclick = async () => {
+      try { await navigator.clipboard.writeText(location.href); document.getElementById("copiar").textContent = "¡Copiada!"; }
+      catch (e) { getSelection().selectAllChildren(document.getElementById("url")); }
+    };
+  } else if (q.get("error")) {
+    titulo.textContent = "❌ No se ha dado el permiso";
+    texto.textContent = "TikTok dice: " + (q.get("error_description") || q.get("error")) + ". Vuelve a pulsar el botón del bot.";
+  } else {
+    texto.textContent = "Esta página es la vuelta de la autorización de TikTok. Ábrela desde el botón del bot.";
+  }
+</script>
+</body>
+</html>
